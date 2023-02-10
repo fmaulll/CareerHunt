@@ -46,6 +46,7 @@ const JobDetail = () => {
         dispatch(setLoading(false));
       }
     } catch (error: any) {
+      dispatch(setLoading(false));
       if (error.response.status === 401) {
         alert(error.message)
         dispatch(userLogout())
@@ -53,7 +54,6 @@ const JobDetail = () => {
 
         return
       }
-      dispatch(setLoading(false));
       dispatch(setError(error.response.data.message));
       alert(error.response.data.message)
     }
