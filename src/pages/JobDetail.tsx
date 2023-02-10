@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { setError, setLoading } from "../features/authSlice";
+import { setError, setLoading, userLogout } from "../features/authSlice";
 import { RootState } from "../store";
 import { PositionData } from "../type";
 import parse from "html-react-parser";
@@ -46,8 +46,16 @@ const JobDetail = () => {
         dispatch(setLoading(false));
       }
     } catch (error: any) {
+      if (error.response.status === 401) {
+        alert(error.message)
+        dispatch(userLogout())
+        navigate("/")
+
+        return
+      }
       dispatch(setLoading(false));
-      dispatch(setError(error?.message));
+      dispatch(setError(error.response.data.message));
+      alert(error.response.data.message)
     }
   };
 
@@ -55,10 +63,10 @@ const JobDetail = () => {
     getJobDetail();
   }, []);
   return (
-    <div>
+    <div className=" ">
       <Button
         buttonType="primaryWhite"
-        classStyle="px-4 w-min mb-8"
+        classStyle="px-4 w-32 mb-8"
         disabled={false}
         icon={<MdOutlineArrowBackIos />}
         onClick={() => navigate("/jobs")}

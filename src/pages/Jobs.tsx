@@ -1,14 +1,16 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Filter from "../components/molecules/Filter";
 import TablePagination from "../components/organisms/TablePagination";
-import { setError, setLoading } from "../features/authSlice";
+import { setError, setLoading, userLogout } from "../features/authSlice";
 import { RootState } from "../store";
 import { PositionData, PositionRequest } from "../type";
 
 const Jobs = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { userToken } = useSelector((state: RootState) => state.auth);
   const [data, setData] = useState<PositionData[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -37,8 +39,16 @@ const Jobs = () => {
         dispatch(setLoading(false));
       }
     } catch (error: any) {
+      if (error.response.status === 401) {
+        alert(error.message);
+        dispatch(userLogout());
+        navigate("/");
+
+        return;
+      }
       dispatch(setLoading(false));
-      dispatch(setError(error?.message));
+      dispatch(setError(error.response.data.message));
+      alert(error.response.data.message);
     }
   };
 
