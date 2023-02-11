@@ -35,6 +35,7 @@ const Register: FC = () => {
         data: dataRequest,
       });
       if (result.status === 201) {
+        dispatch(setLoading(false));
         alert("Success")
         navigate("/");
       }
